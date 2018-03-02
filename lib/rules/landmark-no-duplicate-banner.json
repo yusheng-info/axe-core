@@ -1,5 +1,5 @@
 {
-  "id": "landmark-no-more-than-one-banner",
+  "id": "landmark-no-duplicate-banner",
   "selector": "html",
   "tags": [
     "best-practice"
@@ -10,7 +10,7 @@
   },
   "all": [],
   "any": [
-    "has-no-more-than-one-banner"
+    "page-no-duplicate-banner"
   ],
   "none": []
 }

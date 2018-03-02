@@ -1,5 +1,5 @@
 {
-  "id": "landmark-no-more-than-one-contentinfo",
+  "id": "landmark-no-duplicate-contentinfo",
   "selector": "html",
   "tags": [
     "best-practice"
@@ -10,7 +10,7 @@
   },
   "all": [],
   "any": [
-    "has-no-more-than-one-contentinfo"
+    "page-no-duplicate-contentinfo"
   ],
   "none": []
 }
