@@ -20,6 +20,7 @@
 		1. [Results Object](#results-object)
 	1. [API Name: axe.registerPlugin](#api-name-axeregisterplugin)
 	1. [API Name: axe.cleanup](#api-name-axecleanup)
+	1. [API Name: axe.setDocument](#api-name-axesetdocument)
 	1. [Virtual DOM Utilities](#virtual-dom-utilities)
 		1. [API Name: axe.utils.querySelectorAll](#api-name-axeutilsqueryselectorall)
 	1. [Common Functions](#common-functions)
@@ -637,6 +638,15 @@ The signature is:
 
 `resolve` takes no arguments and `reject` takes a single argument that must be a string or have a toString() method in its prototype.
 
+### API Name: axe.setDocument
+
+Change what object aXe will use as its `document` variable. This may be helpful when the document to test against isn't available when axe is loaded. The document is **not** automatically detected based on the [`context` parameter](#context-parameter).
+
+```javascript
+	axe.setDocument(myDocument);
+```
+
+The document can be reset to the initial state with `axe.resetDocument()`.
 
 ### Virtual DOM Utilities
 
