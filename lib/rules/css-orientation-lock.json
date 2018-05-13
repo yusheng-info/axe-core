@@ -1,0 +1,15 @@
+{
+  "id": "css-orientation-lock",
+  "selector": "html, body",
+  "tags": [
+  ],
+  "metadata": {
+    "description": "",
+    "help": ""
+  },
+  "all": [],
+  "any": [],
+  "none": [
+    "css-orientation-lock"
+  ]
+}

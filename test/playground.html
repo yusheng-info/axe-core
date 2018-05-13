@@ -1,15 +1,27 @@
 <!doctype html>
 <html lang="en">
 <title>O hai</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="local-style.css">
+<style>
+  *:focus {
+    outline: solid blue 3px;
+  }
+</style>
 
-<div class="foo" id="foo">foo</div>
+<div class="container">
+  <h1>Hello Axe</h1>
+</div>
 
 <script src="/axe.js"></script>
 <script>
+
 window.addEventListener('load' , function () {
-  axe.run(document, function (err, res) {
-    console.log(res.violations);
-    res.incomplete.forEach(issue => console.log(issue))
+  axe.run({ runOnly: {
+    type: 'rule',
+    values: ['css-orientation-lock']
+  }}, function (err, res) {
+    console.log(res);
   });
 })
 </script>
