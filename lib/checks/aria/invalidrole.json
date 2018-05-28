@@ -1,11 +1,15 @@
 {
   "id": "invalidrole",
   "evaluate": "invalidrole.js",
+  "options": {
+    "fallbackRole": true
+  },
   "metadata": {
     "impact": "critical",
     "messages": {
       "pass": "ARIA role is valid",
-      "fail": "Role must be one of the valid ARIA roles"
+      "fail": "Role must be one of the valid ARIA roles",
+      "incomplete": "Role could not be determined"
     }
   }
 }
