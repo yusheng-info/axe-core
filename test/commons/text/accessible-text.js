@@ -1,3 +1,34 @@
+describe('text.accessibileArrayVirtual', function () {
+	'use strict';
+
+	var fixture = document.getElementById('fixture');
+	var shadowSupport = axe.testUtils.shadowSupport;
+
+	afterEach(function() {
+		fixture.innerHTML = '';
+		axe._tree = null;
+	});
+
+	it('is called through accessibleTextVirtual with a DOM node', function() {
+		var accessibleArrayVirtual = axe.commons.text.accessibleArrayVirtual;
+		var accessibleTextVirtual = axe.commons.text.accessibleTextVirtual;
+		var isCalled = false;
+
+		axe.commons.text.accessibleArrayVirtual = function (arg) {
+			isCalled = arg
+			return ['foo', 'bar', 'baz'];
+		}
+		try {
+			assert.equal(accessibleTextVirtual('fbb'), 'foo bar baz');
+			assert.equal(isCalled, 'fbb');
+			axe.commons.text.accessibleArrayVirtual = accessibleArrayVirtual;
+		} catch (e) {
+			axe.commons.text.accessibleArrayVirtual = accessibleArrayVirtual;
+			throw e;
+		}
+	});
+})
+
 describe('text.accessibleTextVirtual', function() {
 	'use strict';
 
@@ -435,7 +466,7 @@ describe('text.accessibleTextVirtual', function() {
 		axe._tree = axe.utils.getFlattenedTree(fixture);
 
 		var target = axe.utils.querySelectorAll(axe._tree, 'a')[0];
-		assert.equal(axe.commons.text.accessibleTextVirtual(target), 'HelloWorld');
+		assert.equal(axe.commons.text.accessibleTextVirtual(target), 'Hello World');
 	});
 
 	it('should add spaces around non-phrasing elements', function() {
