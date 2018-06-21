@@ -3,6 +3,7 @@ describe('text.accessibileArrayVirtual', function () {
 
 	var fixture = document.getElementById('fixture');
 	var shadowSupport = axe.testUtils.shadowSupport;
+	var accessibleArrayVirtual = axe.commons.text.accessibleArrayVirtual;
 
 	afterEach(function() {
 		fixture.innerHTML = '';
@@ -10,7 +11,6 @@ describe('text.accessibileArrayVirtual', function () {
 	});
 
 	it('is called through accessibleTextVirtual with a DOM node', function() {
-		var accessibleArrayVirtual = axe.commons.text.accessibleArrayVirtual;
 		var accessibleTextVirtual = axe.commons.text.accessibleTextVirtual;
 		var isCalled = false;
 
@@ -26,6 +26,15 @@ describe('text.accessibileArrayVirtual', function () {
 			axe.commons.text.accessibleArrayVirtual = accessibleArrayVirtual;
 			throw e;
 		}
+	});
+
+	it('returns slottedSegment for <slot /> content', function () {
+		fixture.innerHTML = '<button><slot></slot></button>';
+		axe._tree = axe.utils.getFlattenedTree(fixture);
+		var button = axe.utils.querySelectorAll(axe._tree, 'button')[0];
+		var outcome = accessibleArrayVirtual(button)
+
+		assert.deepEqual(outcome, [axe.constants.slottedSegment]);
 	});
 })
 
