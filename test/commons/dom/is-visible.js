@@ -65,11 +65,11 @@ describe('dom.isVisible', function () {
 			assert.isFalse(axe.commons.dom.isVisible(el));
 		});
 
-		it('should return false on detached elements', function () {
+		it('should return undefined on detached elements', function () {
 			var el = document.createElement('div');
 			el.innerHTML = 'I am not visible because I am detached!';
 
-			assert.isFalse(axe.commons.dom.isVisible(el));
+			assert.isUndefined(axe.commons.dom.isVisible(el));
 		});
 
 		it('should return true on a document', function () {
@@ -272,11 +272,11 @@ describe('dom.isVisible', function () {
 			assert.isTrue(axe.commons.dom.isVisible(el, true));
 		});
 
-		it('should return false on detached elements', function () {
+		it('should return undefined on detached elements', function () {
 			var el = document.createElement('div');
 			el.innerHTML = 'I am not visible because I am detached!';
 
-			assert.isFalse(axe.commons.dom.isVisible(el, true));
+			assert.isUndefined(axe.commons.dom.isVisible(el, true));
 		});
 
 		it('should return true on a document', function () {
