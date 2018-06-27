@@ -817,11 +817,7 @@ describe('text.accessibleTextVirtual', function() {
 			});
 		});
 
-<<<<<<< 01fd9c89d47039587383397fc5e905a088322650
 		it('should find implicit labels with id that does not match to a label', function () {
-=======
-		it('should find implicit labels with id', function () {
->>>>>>> fix(accessible-name): Allow fallback labels when input has id
 			types.forEach(function(type) {
 				var t = type ? ' type="' + type + '"' : '';
 				fixture.innerHTML = '<label for="t1">Hello World' +
