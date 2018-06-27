@@ -2,7 +2,6 @@ describe('text.accessibileArrayVirtual', function () {
 	'use strict';
 
 	var fixture = document.getElementById('fixture');
-	var shadowSupport = axe.testUtils.shadowSupport;
 	var accessibleArrayVirtual = axe.commons.text.accessibleArrayVirtual;
 
 	afterEach(function() {
