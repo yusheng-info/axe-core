@@ -18,7 +18,10 @@ describe('aria-allowed-attr', function () {
 		fixture.appendChild(node);
 
 		assert.isFalse(checks['aria-allowed-attr'].evaluate.call(checkContext, node));
-		assert.deepEqual(checkContext._data, ['aria-selected="true"']);
+		assert.deepEqual(checkContext._data, {
+			attrs: ['aria-selected'],
+			invalid: ['aria-selected="true"']
+		});
 	});
 
 	it('should not report on required attributes', function () {
@@ -41,7 +44,10 @@ describe('aria-allowed-attr', function () {
 		fixture.appendChild(node);
 
 		assert.isFalse(checks['aria-allowed-attr'].evaluate.call(checkContext, node));
-		assert.deepEqual(checkContext._data, ['aria-selected="true"']);
+		assert.deepEqual(checkContext._data, {
+			attrs: ['aria-selected'],
+			invalid: ['aria-selected="true"']
+		});
 	});
 
 	it('should return true if there is no role', function () {
