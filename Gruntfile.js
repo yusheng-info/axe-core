@@ -394,6 +394,13 @@ module.exports = function (grunt) {
 		'markdownlint'
 	]);
 
+	grunt.registerTask('postinstall', [
+		'concat:commons',
+		'configure',
+		'babel',
+		'concat:engine',
+		'uglify'
+	]);
 	grunt.registerTask('ci-build', [
 		'build',
 		'retire',
