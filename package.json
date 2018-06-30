@@ -56,6 +56,7 @@
   },
   "scripts": {
     "build": "grunt",
+    "postinstall": "postinstall-build axe.js --script build",
     "test": "grunt test",
     "test-fast": "grunt test-fast",
     "version": "echo \"use 'npm run release' to bump axe-core version\" && exit 1",
@@ -100,5 +101,7 @@
     "sri-toolbox": "^0.2.0",
     "standard-version": "^4.2.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "postinstall-build": "^5.0.1"
+  }
 }
