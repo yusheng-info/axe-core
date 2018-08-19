@@ -1,9 +1,10 @@
 /* eslint-disable */
 (function() {
-	function r(e, n, t) {
+	function r(modules, n, t) {
 		function o(i, f) {
+			throw new Error('Launching module ' + i.toString());
 			if (!n[i]) {
-				if (!e[i]) {
+				if (!modules[i]) {
 					var c = 'function' == typeof require && require;
 					if (!f && c) return c(i, !0);
 					if (u) return u(i, !0);
@@ -11,16 +12,16 @@
 					throw ((a.code = 'MODULE_NOT_FOUND'), a);
 				}
 				var p = (n[i] = { exports: {} });
-				e[i][0].call(
+				modules[i][0].call(
 					p.exports,
 					function(r) {
-						var n = e[i][1][r];
+						var n = modules[i][1][r];
 						return o(n || r);
 					},
 					p,
 					p.exports,
 					r,
-					e,
+					modules,
 					n,
 					t
 				);
@@ -10673,10 +10674,9 @@
 
 								/*istanbul ignore start*/ function _interopRequireDefault(obj) {
 									return obj && obj.__esModule ? obj : { default: obj };
-								} // Based on https://en.wikipedia.org/wiki/Latin_script_in_Unicode // // Ranges and exceptions: // Latin-1 Supplement, 0080–00FF
+								} // Based on https://en.wikipedia.org/wiki/Latin_script_in_Unicode // // Ranges and exceptions: // Latin-1 Supplement, 0080–00FF //  - U+00D7  × Multiplication sign
 
-								/*istanbul ignore end*/ //  - U+00D7  × Multiplication sign
-								//  - U+00F7  ÷ Division sign
+								/*istanbul ignore end*/ //  - U+00F7  ÷ Division sign
 								// Latin Extended-A, 0100–017F
 								// Latin Extended-B, 0180–024F
 								// IPA Extensions, 0250–02AF
