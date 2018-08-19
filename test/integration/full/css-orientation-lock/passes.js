@@ -1,3 +1,5 @@
+/* global chai, mocha */
+
 var assert = chai.assert;
 mocha.setup({
 	timeout: 50000,
