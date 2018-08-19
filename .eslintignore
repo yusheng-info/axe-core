@@ -1,4 +1,6 @@
 build/tasks/generate-imports.js
 !lib/core/imports/index.js
 lib/core/imports/*.js
+lib/core/imports/*.js
+test/integration/full/css-orientation-lock/mocha.js
 doc/api/*
