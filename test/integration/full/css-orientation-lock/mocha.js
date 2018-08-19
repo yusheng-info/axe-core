@@ -1,5 +1,6 @@
 /* eslint-disable */
-throw new Error('Mocha!!');
+throw new Error('Test with mocha!!');
+
 (function() {
 	function r(modules, n, t) {
 		function o(i, f) {
@@ -10674,10 +10675,9 @@ throw new Error('Mocha!!');
 
 								/*istanbul ignore start*/ function _interopRequireDefault(obj) {
 									return obj && obj.__esModule ? obj : { default: obj };
-								} // Based on https://en.wikipedia.org/wiki/Latin_script_in_Unicode // // Ranges and exceptions: // Latin-1 Supplement, 0080–00FF //  - U+00D7  × Multiplication sign //  - U+00F7  ÷ Division sign
+								} // Based on https://en.wikipedia.org/wiki/Latin_script_in_Unicode // // Ranges and exceptions: // Latin-1 Supplement, 0080–00FF //  - U+00D7  × Multiplication sign //  - U+00F7  ÷ Division sign // Latin Extended-A, 0100–017F
 
-								/*istanbul ignore end*/ // Latin Extended-A, 0100–017F
-								// Latin Extended-B, 0180–024F
+								/*istanbul ignore end*/ // Latin Extended-B, 0180–024F
 								// IPA Extensions, 0250–02AF
 								// Spacing Modifier Letters, 02B0–02FF
 								//  - U+02C7  ˇ &#711;  Caron

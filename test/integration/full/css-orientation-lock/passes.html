@@ -4,7 +4,7 @@
 	<title>css orientation lock test</title>
 	<meta charset="utf8">
 	<link rel="stylesheet" type="text/css" href="/node_modules/mocha/mocha.css" />
-	<script src="test.js"></script>
+	<script src="mocha.js"></script>
 	<script src="/node_modules/chai/chai.js"></script>
 	<script src="/axe.js"></script>
 	<!-- Load all stylesheets -->
@@ -18,14 +18,6 @@
 			}
 		}
 	</style>
-	<script>
-		var assert = chai.assert;
-		mocha.setup({
-			timeout: 50000,
-			ui: 'bdd'
-		});
-	</script>
-
 </head>
 <body>
 	<div id="mocha"></div>
