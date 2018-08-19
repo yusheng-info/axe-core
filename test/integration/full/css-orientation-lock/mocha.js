@@ -1,3 +1,4 @@
+/* eslint-disable */
 (function() {
 	function r(e, n, t) {
 		function o(i, f) {
@@ -10660,10 +10661,9 @@
 
 								/*istanbul ignore start*/ function _interopRequireDefault(obj) {
 									return obj && obj.__esModule ? obj : { default: obj };
-								} // Based on https://en.wikipedia.org/wiki/Latin_script_in_Unicode
+								} // Based on https://en.wikipedia.org/wiki/Latin_script_in_Unicode //
 
-								/*istanbul ignore end*/ //
-								// Ranges and exceptions:
+								/*istanbul ignore end*/ // Ranges and exceptions:
 								// Latin-1 Supplement, 0080–00FF
 								//  - U+00D7  × Multiplication sign
 								//  - U+00F7  ÷ Division sign
