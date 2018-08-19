@@ -40,222 +40,224 @@
 	{
 		1: [
 			function(require, module, exports) {
-				(function(process, global) {
-					'use strict';
+				throw new Error('Loading mocha')(
+					function(process, global) {
+						'use strict';
 
-					/* eslint no-unused-vars: off */
-					/* eslint-env commonjs */
+						/* eslint no-unused-vars: off */
+						/* eslint-env commonjs */
 
-					/**
-					 * Shim process.stdout.
-					 */
+						/**
+						 * Shim process.stdout.
+						 */
 
-					process.stdout = require('browser-stdout')({ level: false });
+						process.stdout = require('browser-stdout')({ level: false });
 
-					var Mocha = require('./lib/mocha');
+						var Mocha = require('./lib/mocha');
 
-					/**
-					 * Create a Mocha instance.
-					 *
-					 * @return {undefined}
-					 */
+						/**
+						 * Create a Mocha instance.
+						 *
+						 * @return {undefined}
+						 */
 
-					var mocha = new Mocha({ reporter: 'html' });
+						var mocha = new Mocha({ reporter: 'html' });
 
-					/**
-					 * Save timer references to avoid Sinon interfering (see GH-237).
-					 */
+						/**
+						 * Save timer references to avoid Sinon interfering (see GH-237).
+						 */
 
-					var Date = global.Date;
-					var setTimeout = global.setTimeout;
-					var setInterval = global.setInterval;
-					var clearTimeout = global.clearTimeout;
-					var clearInterval = global.clearInterval;
+						var Date = global.Date;
+						var setTimeout = global.setTimeout;
+						var setInterval = global.setInterval;
+						var clearTimeout = global.clearTimeout;
+						var clearInterval = global.clearInterval;
 
-					var uncaughtExceptionHandlers = [];
+						var uncaughtExceptionHandlers = [];
 
-					var originalOnerrorHandler = global.onerror;
+						var originalOnerrorHandler = global.onerror;
 
-					/**
-					 * Remove uncaughtException listener.
-					 * Revert to original onerror handler if previously defined.
-					 */
+						/**
+						 * Remove uncaughtException listener.
+						 * Revert to original onerror handler if previously defined.
+						 */
 
-					process.removeListener = function(e, fn) {
-						if (e === 'uncaughtException') {
-							if (originalOnerrorHandler) {
-								global.onerror = originalOnerrorHandler;
-							} else {
-								global.onerror = function() {};
+						process.removeListener = function(e, fn) {
+							if (e === 'uncaughtException') {
+								if (originalOnerrorHandler) {
+									global.onerror = originalOnerrorHandler;
+								} else {
+									global.onerror = function() {};
+								}
+								var i = uncaughtExceptionHandlers.indexOf(fn);
+								if (i !== -1) {
+									uncaughtExceptionHandlers.splice(i, 1);
+								}
 							}
-							var i = uncaughtExceptionHandlers.indexOf(fn);
-							if (i !== -1) {
-								uncaughtExceptionHandlers.splice(i, 1);
+						};
+
+						/**
+						 * Implements uncaughtException listener.
+						 */
+
+						process.on = function(e, fn) {
+							if (e === 'uncaughtException') {
+								global.onerror = function(err, url, line) {
+									fn(new Error(err + ' (' + url + ':' + line + ')'));
+									return !mocha.allowUncaught;
+								};
+								uncaughtExceptionHandlers.push(fn);
 							}
-						}
-					};
+						};
 
-					/**
-					 * Implements uncaughtException listener.
-					 */
+						// The BDD UI is registered by default, but no UI will be functional in the
+						// browser without an explicit call to the overridden `mocha.ui` (see below).
+						// Ensure that this default UI does not expose its methods to the global scope.
+						mocha.suite.removeAllListeners('pre-require');
 
-					process.on = function(e, fn) {
-						if (e === 'uncaughtException') {
-							global.onerror = function(err, url, line) {
-								fn(new Error(err + ' (' + url + ':' + line + ')'));
-								return !mocha.allowUncaught;
-							};
-							uncaughtExceptionHandlers.push(fn);
-						}
-					};
+						var immediateQueue = [];
+						var immediateTimeout;
 
-					// The BDD UI is registered by default, but no UI will be functional in the
-					// browser without an explicit call to the overridden `mocha.ui` (see below).
-					// Ensure that this default UI does not expose its methods to the global scope.
-					mocha.suite.removeAllListeners('pre-require');
-
-					var immediateQueue = [];
-					var immediateTimeout;
-
-					function timeslice() {
-						var immediateStart = new Date().getTime();
-						while (
-							immediateQueue.length &&
-							new Date().getTime() - immediateStart < 100
-						) {
-							immediateQueue.shift()();
-						}
-						if (immediateQueue.length) {
-							immediateTimeout = setTimeout(timeslice, 0);
-						} else {
-							immediateTimeout = null;
-						}
-					}
-
-					/**
-					 * High-performance override of Runner.immediately.
-					 */
-
-					Mocha.Runner.immediately = function(callback) {
-						immediateQueue.push(callback);
-						if (!immediateTimeout) {
-							immediateTimeout = setTimeout(timeslice, 0);
-						}
-					};
-
-					/**
-					 * Function to allow assertion libraries to throw errors directly into mocha.
-					 * This is useful when running tests in a browser because window.onerror will
-					 * only receive the 'message' attribute of the Error.
-					 */
-					mocha.throwError = function(err) {
-						uncaughtExceptionHandlers.forEach(function(fn) {
-							fn(err);
-						});
-						throw err;
-					};
-
-					/**
-					 * Override ui to ensure that the ui functions are initialized.
-					 * Normally this would happen in Mocha.prototype.loadFiles.
-					 */
-
-					mocha.ui = function(ui) {
-						Mocha.prototype.ui.call(this, ui);
-						this.suite.emit('pre-require', global, null, this);
-						return this;
-					};
-
-					/**
-					 * Setup mocha with the given setting options.
-					 */
-
-					mocha.setup = function(opts) {
-						if (typeof opts === 'string') {
-							opts = { ui: opts };
-						}
-						for (var opt in opts) {
-							if (opts.hasOwnProperty(opt)) {
-								this[opt](opts[opt]);
-							}
-						}
-						return this;
-					};
-
-					/**
-					 * Run mocha, returning the Runner.
-					 */
-
-					mocha.run = function(fn) {
-						var options = mocha.options;
-						mocha.globals('location');
-
-						var query = Mocha.utils.parseQuery(global.location.search || '');
-						if (query.grep) {
-							mocha.grep(query.grep);
-						}
-						if (query.fgrep) {
-							mocha.fgrep(query.fgrep);
-						}
-						if (query.invert) {
-							mocha.invert();
-						}
-
-						return Mocha.prototype.run.call(mocha, function(err) {
-							// The DOM Document is not available in Web Workers.
-							var document = global.document;
-							if (
-								document &&
-								document.getElementById('mocha') &&
-								options.noHighlighting !== true
+						function timeslice() {
+							var immediateStart = new Date().getTime();
+							while (
+								immediateQueue.length &&
+								new Date().getTime() - immediateStart < 100
 							) {
-								Mocha.utils.highlightTags('code');
+								immediateQueue.shift()();
 							}
-							if (fn) {
+							if (immediateQueue.length) {
+								immediateTimeout = setTimeout(timeslice, 0);
+							} else {
+								immediateTimeout = null;
+							}
+						}
+
+						/**
+						 * High-performance override of Runner.immediately.
+						 */
+
+						Mocha.Runner.immediately = function(callback) {
+							immediateQueue.push(callback);
+							if (!immediateTimeout) {
+								immediateTimeout = setTimeout(timeslice, 0);
+							}
+						};
+
+						/**
+						 * Function to allow assertion libraries to throw errors directly into mocha.
+						 * This is useful when running tests in a browser because window.onerror will
+						 * only receive the 'message' attribute of the Error.
+						 */
+						mocha.throwError = function(err) {
+							uncaughtExceptionHandlers.forEach(function(fn) {
 								fn(err);
+							});
+							throw err;
+						};
+
+						/**
+						 * Override ui to ensure that the ui functions are initialized.
+						 * Normally this would happen in Mocha.prototype.loadFiles.
+						 */
+
+						mocha.ui = function(ui) {
+							Mocha.prototype.ui.call(this, ui);
+							this.suite.emit('pre-require', global, null, this);
+							return this;
+						};
+
+						/**
+						 * Setup mocha with the given setting options.
+						 */
+
+						mocha.setup = function(opts) {
+							if (typeof opts === 'string') {
+								opts = { ui: opts };
 							}
-						});
-					};
+							for (var opt in opts) {
+								if (opts.hasOwnProperty(opt)) {
+									this[opt](opts[opt]);
+								}
+							}
+							return this;
+						};
 
-					/**
-					 * Expose the process shim.
-					 * https://github.com/mochajs/mocha/pull/916
-					 */
+						/**
+						 * Run mocha, returning the Runner.
+						 */
 
-					Mocha.process = process;
+						mocha.run = function(fn) {
+							var options = mocha.options;
+							mocha.globals('location');
 
-					/**
-					 * Expose mocha.
-					 */
+							var query = Mocha.utils.parseQuery(global.location.search || '');
+							if (query.grep) {
+								mocha.grep(query.grep);
+							}
+							if (query.fgrep) {
+								mocha.fgrep(query.fgrep);
+							}
+							if (query.invert) {
+								mocha.invert();
+							}
 
-					global.Mocha = Mocha;
-					global.mocha = mocha;
+							return Mocha.prototype.run.call(mocha, function(err) {
+								// The DOM Document is not available in Web Workers.
+								var document = global.document;
+								if (
+									document &&
+									document.getElementById('mocha') &&
+									options.noHighlighting !== true
+								) {
+									Mocha.utils.highlightTags('code');
+								}
+								if (fn) {
+									fn(err);
+								}
+							});
+						};
 
-					// this allows test/acceptance/required-tokens.js to pass; thus,
-					// you can now do `const describe = require('mocha').describe` in a
-					// browser context (assuming browserification).  should fix #880
+						/**
+						 * Expose the process shim.
+						 * https://github.com/mochajs/mocha/pull/916
+						 */
 
-					var varName =
+						Mocha.process = process;
+
+						/**
+						 * Expose mocha.
+						 */
+
+						global.Mocha = Mocha;
+						global.mocha = mocha;
+
+						// this allows test/acceptance/required-tokens.js to pass; thus,
+						// you can now do `const describe = require('mocha').describe` in a
+						// browser context (assuming browserification).  should fix #880
+
+						var varName =
+							typeof global !== 'undefined'
+								? 'global'
+								: typeof self !== 'undefined'
+									? 'self'
+									: typeof window !== 'undefined'
+										? 'window'
+										: '{}';
+						throw new Error('Assigning mocha to global ' + varName);
+						module.exports = global;
+					}.call(
+						this,
+						require('_process'),
 						typeof global !== 'undefined'
-							? 'global'
+							? global
 							: typeof self !== 'undefined'
-								? 'self'
+								? self
 								: typeof window !== 'undefined'
-									? 'window'
-									: '{}';
-					throw new Error('Assigning mocha to global ' + varName);
-					module.exports = global;
-				}.call(
-					this,
-					require('_process'),
-					typeof global !== 'undefined'
-						? global
-						: typeof self !== 'undefined'
-							? self
-							: typeof window !== 'undefined'
-								? window
-								: {}
-				));
+									? window
+									: {}
+					)
+				);
 			},
 			{ './lib/mocha': 13, _process: 56, 'browser-stdout': 39 }
 		],
@@ -10671,10 +10673,9 @@
 
 								/*istanbul ignore start*/ function _interopRequireDefault(obj) {
 									return obj && obj.__esModule ? obj : { default: obj };
-								} // Based on https://en.wikipedia.org/wiki/Latin_script_in_Unicode // // Ranges and exceptions:
+								} // Based on https://en.wikipedia.org/wiki/Latin_script_in_Unicode // // Ranges and exceptions: // Latin-1 Supplement, 0080–00FF
 
-								/*istanbul ignore end*/ // Latin-1 Supplement, 0080–00FF
-								//  - U+00D7  × Multiplication sign
+								/*istanbul ignore end*/ //  - U+00D7  × Multiplication sign
 								//  - U+00F7  ÷ Division sign
 								// Latin Extended-A, 0100–017F
 								// Latin Extended-B, 0180–024F
