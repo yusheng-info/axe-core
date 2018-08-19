@@ -234,6 +234,16 @@
 					// this allows test/acceptance/required-tokens.js to pass; thus,
 					// you can now do `const describe = require('mocha').describe` in a
 					// browser context (assuming browserification).  should fix #880
+
+					var varName =
+						typeof global !== 'undefined'
+							? 'global'
+							: typeof self !== 'undefined'
+								? 'self'
+								: typeof window !== 'undefined'
+									? 'window'
+									: '{}';
+					throw new Error('Assigning mocha to global ' + varName);
 					module.exports = global;
 				}.call(
 					this,
@@ -10661,10 +10671,9 @@
 
 								/*istanbul ignore start*/ function _interopRequireDefault(obj) {
 									return obj && obj.__esModule ? obj : { default: obj };
-								} // Based on https://en.wikipedia.org/wiki/Latin_script_in_Unicode //
+								} // Based on https://en.wikipedia.org/wiki/Latin_script_in_Unicode // // Ranges and exceptions:
 
-								/*istanbul ignore end*/ // Ranges and exceptions:
-								// Latin-1 Supplement, 0080–00FF
+								/*istanbul ignore end*/ // Latin-1 Supplement, 0080–00FF
 								//  - U+00D7  × Multiplication sign
 								//  - U+00F7  ÷ Division sign
 								// Latin Extended-A, 0100–017F
