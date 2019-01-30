@@ -2,7 +2,7 @@
 	"id": "aria-required-children",
 	"evaluate": "required-children.js",
 	"options": {
-		"reviewEmpty": ["listbox"]
+		"reviewEmpty": ["list", "listbox"]
 	},
 	"metadata": {
 		"impact": "critical",
