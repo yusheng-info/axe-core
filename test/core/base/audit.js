@@ -459,50 +459,67 @@ describe('Audit', function() {
 				{ include: [axe.utils.getFlattenedTree(fixture)[0]] },
 				{},
 				function(results) {
-					var expected = [
-						{
-							id: 'positive1',
-							result: 'inapplicable',
-							pageLevel: false,
-							impact: null,
-							nodes: '...other tests cover this...'
-						},
-						{
-							id: 'positive2',
-							result: 'inapplicable',
-							pageLevel: false,
-							impact: null,
-							nodes: '...other tests cover this...'
-						},
-						{
-							id: 'negative1',
-							result: 'inapplicable',
-							pageLevel: false,
-							impact: null,
-							nodes: '...other tests cover this...'
-						},
-						{
-							id: 'positive3',
-							result: 'inapplicable',
-							pageLevel: false,
-							impact: null,
-							nodes: '...other tests cover this...'
-						}
-					];
+					// console.log('got here', JSON.stringify(results,null,2));
 
-					var out = results[0].nodes[0].node.source;
-					results.forEach(function(res) {
-						// attribute order is a pain in the lower back in IE, so we're not
-						// comparing nodes. Check.run and Rule.run do this.
-						res.nodes = '...other tests cover this...';
-					});
+					try {
+						var expected = [
+							{
+								id: 'positive1',
+								result: 'inapplicable',
+								pageLevel: false,
+								impact: null,
+								nodes: '...other tests cover this...'
+							},
+							{
+								id: 'positive2',
+								result: 'inapplicable',
+								pageLevel: false,
+								impact: null,
+								nodes: '...other tests cover this...'
+							},
+							{
+								id: 'negative1',
+								result: 'inapplicable',
+								pageLevel: false,
+								impact: null,
+								nodes: '...other tests cover this...'
+							},
+							{
+								id: 'positive3',
+								result: 'inapplicable',
+								pageLevel: false,
+								impact: null,
+								nodes: '...other tests cover this...'
+							}
+						];
 
-					assert.deepEqual(JSON.parse(JSON.stringify(results)), expected);
-					assert.match(
-						out,
-						/^<input(\s+type="text"|\s+aria-label="monkeys"){2,}>/
-					);
-					done();
+						// console.log('before out');
+
+						var out = results[0].nodes[0].node.source;
+
+						// console.log('out:', out);
+
+						results.forEach(function(res) {
+							// attribute order is a pain in the lower back in IE, so we're not
+							// comparing nodes. Check.run and Rule.run do this.
+							res.nodes = '...other tests cover this...';
+						});
+
+						// console.log('beforeDeep');
+						assert.deepEqual(JSON.parse(JSON.stringify(results)), expected);
+						// console.log('afterDeep');
+
+						assert.match(
+							out,
+							/^<input(\s+type="text"|\s+aria-label="monkeys"){2,}>/
+						);
+
+						// console.log('out matched');
+						done();
+					} catch (e) {
+						console.log('error:', e);
+						done(e);
+					}
 				},
 				isNotCalled
 			);

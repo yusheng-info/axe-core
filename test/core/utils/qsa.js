@@ -15,7 +15,10 @@ function Vnode(nodeName, className, attributes, id) {
 		value: typeof className !== 'undefined' ? className : null
 	});
 
-	this.hasAttributes = () => this.attributes.length > 0;
+	this.hasAttributes = () => {
+		return this.attributes.filter(attr => attr.value).length > 0;
+	};
+	this.cloneNode = () => this;
 }
 
 Vnode.prototype.getAttribute = function(att) {
