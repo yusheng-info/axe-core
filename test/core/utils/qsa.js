@@ -7,53 +7,67 @@ function Vnode(nodeName, className, attributes, id) {
 	this.nodeType = 1;
 
 	this.attributes.push({
-		key: 'id',
+		name: 'id',
 		value: typeof id !== 'undefined' ? id : null
 	});
 	this.attributes.push({
-		key: 'class',
+		name: 'class',
 		value: typeof className !== 'undefined' ? className : null
 	});
+
+	this.hasAttributes = () => this.attributes.length > 0;
 }
 
 Vnode.prototype.getAttribute = function(att) {
 	'use strict';
 	var attribute = this.attributes.find(function(item) {
-		return item.key === att;
+		return item.name === att;
 	});
 	return attribute ? attribute.value : null;
 };
 
 function getTestDom() {
 	'use strict';
-	return [
+	let dom = [
 		{
 			actualNode: new Vnode('html'),
+			selectorMap: {},
+			order: 1,
 			children: [
 				{
 					actualNode: new Vnode('body'),
+					selectorMap: {},
+					order: 2,
 					children: [
 						{
 							actualNode: new Vnode('div', 'first', [
 								{
-									key: 'data-a11yhero',
+									name: 'data-a11yhero',
 									value: 'faulkner'
 								}
 							]),
 							shadowId: 'a',
+							selectorMap: {},
+							order: 3,
 							children: [
 								{
 									actualNode: new Vnode('ul'),
 									shadowId: 'a',
+									selectorMap: {},
+									order: 4,
 									children: [
 										{
 											actualNode: new Vnode('li', 'breaking'),
 											shadowId: 'a',
+											selectorMap: {},
+											order: 5,
 											children: []
 										},
 										{
 											actualNode: new Vnode('li', 'breaking'),
 											shadowId: 'a',
+											selectorMap: {},
+											order: 6,
 											children: []
 										}
 									]
@@ -62,15 +76,21 @@ function getTestDom() {
 						},
 						{
 							actualNode: new Vnode('div', '', [], 'one'),
+							selectorMap: {},
+							order: 7,
 							children: []
 						},
 						{
 							actualNode: new Vnode('div', 'second third'),
 							shadowId: 'b',
+							selectorMap: {},
+							order: 8,
 							children: [
 								{
 									actualNode: new Vnode('ul'),
 									shadowId: 'b',
+									selectorMap: {},
+									order: 9,
 									children: [
 										{
 											actualNode: new Vnode(
@@ -78,13 +98,15 @@ function getTestDom() {
 												undefined,
 												[
 													{
-														key: 'role',
+														name: 'role',
 														value: 'tab'
 													}
 												],
 												'one'
 											),
 											shadowId: 'b',
+											selectorMap: {},
+											order: 10,
 											children: []
 										},
 										{
@@ -93,13 +115,15 @@ function getTestDom() {
 												undefined,
 												[
 													{
-														key: 'role',
+														name: 'role',
 														value: 'button'
 													}
 												],
 												'one'
 											),
 											shadowId: 'c',
+											selectorMap: {},
+											order: 11,
 											children: []
 										}
 									]
@@ -111,6 +135,18 @@ function getTestDom() {
 			]
 		}
 	];
+
+	function setParent(node) {
+		if (node.children) {
+			node.children.forEach(n => {
+				n.parent = node;
+				setParent(n);
+			});
+		}
+	}
+
+	setParent(dom[0]);
+	return dom;
 }
 
 describe('axe.utils.querySelectorAllFilter', function() {
@@ -119,6 +155,7 @@ describe('axe.utils.querySelectorAllFilter', function() {
 	afterEach(function() {});
 	beforeEach(function() {
 		dom = getTestDom();
+		axe.utils.generateSelectorMap(dom[0]);
 	});
 	it('should find nodes using just the tag', function() {
 		var result = axe.utils.querySelectorAllFilter(dom, 'li');
@@ -154,7 +191,7 @@ describe('axe.utils.querySelectorAllFilter', function() {
 	});
 	it('should find nodes using id', function() {
 		var result = axe.utils.querySelectorAllFilter(dom, '#one');
-		assert.equal(result.length, 1);
+		assert.equal(result.length, 3);
 	});
 	it('should find nodes using id, but not in shadow DOM', function() {
 		var result = axe.utils.querySelectorAllFilter(dom[0].children[0], '#one');
@@ -291,7 +328,7 @@ describe('axe.utils.querySelectorAllFilter', function() {
 			return node.actualNode.nodeName !== 'UL';
 		});
 		assert.equal(result[0].actualNode.nodeName, 'DIV');
-		assert.equal(result.length, 1);
+		assert.equal(result.length, 3);
 	});
 });
 describe('axe.utils.querySelectorAll', function() {
