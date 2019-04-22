@@ -311,6 +311,5 @@ axe.testUtils = testUtils;
 beforeEach(function() {
 	axe._cache = {
 		nodeMap: new WeakMap()
-		// selectorMap: {}
 	};
 });
