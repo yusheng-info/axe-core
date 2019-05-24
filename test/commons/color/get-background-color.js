@@ -750,6 +750,25 @@ describe('color.getBackgroundColor', function() {
 		assert.closeTo(actual.alpha, 1, 0);
 	});
 
+	it('should return bgColor when content is inside overflow: hidden', function() {
+		fixture.innerHTML =
+			'<div style="position: relative;">' +
+			'<div style="background-color: red; width: 100px;">' +
+			'<div style="width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' +
+			'<span id="target">Welcome to the jungle, we\'ve got fun and games. We got everything you want honey, we know the names' +
+			'</div></div>' +
+			'<div style="position: absolute; left: 105px; top: 0; background-color: black; width: 600px; height: 100px;"></div>' +
+			'</div>';
+		axe.testUtils.flatTreeSetup(fixture.firstChild);
+		var target = fixture.querySelector('#target');
+		var actual = axe.commons.color.getBackgroundColor(target, []);
+
+		assert.closeTo(actual.red, 255, 0);
+		assert.closeTo(actual.green, 0, 0);
+		assert.closeTo(actual.blue, 0, 0);
+		assert.closeTo(actual.alpha, 1, 0);
+	});
+
 	(shadowSupported ? it : xit)('finds colors in shadow boundaries', function() {
 		fixture.innerHTML = '<div id="container"></div>';
 		var container = fixture.querySelector('#container');
